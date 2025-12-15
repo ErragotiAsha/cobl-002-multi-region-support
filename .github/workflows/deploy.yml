@@ -38,10 +38,17 @@ jobs:
 
       - name: Verify Replication to Secondary Bucket
         run: |
-          echo "Waiting 15 seconds for replication..."
-          sleep 15
-          if aws s3 ls s3://cobl-002-secondary-asha1/ | grep -q testfile_10rows.csv; then
-            echo "File replicated successfully!"
-          else
-            echo "File not found in secondary bucket yet."
-          fi
+          echo "Waiting for S3 replication (up to 30 minutes)..."
+
+          for i in {1..180}; do
+            if aws s3 ls s3://cobl-002-secondary-asha1/ | grep -q testfile_10rows.csv; then
+              echo "✅ File replicated successfully!"
+              exit 0
+            fi
+
+            echo "⏳ Replication not completed yet... retrying in 10 seconds"
+            sleep 10
+          done
+
+          echo "❌ Replication did not complete within 30 minutes"
+          exit 1
