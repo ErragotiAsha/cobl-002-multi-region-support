@@ -1,64 +1,54 @@
-# COBL-002 – Multi-Region Support
+# 🌐 COBL-002 – Multi-Region Support Implementation
 
-## Project Overview
-This project implements AWS multi-region S3 support using Terraform as part of COBL-002 compliance.
+This repository implements **COBL-002 – AWS Cloud Operations Competency: Multi-Region Support** using **AWS S3, IAM, CloudWatch, Terraform**, and **GitHub Actions**.  
+The solution demonstrates **cross-region S3 replication, operational resilience, governance, and disaster recovery readiness**.
 
-## Terraform Implementation
+---
 
-- **Primary Bucket:** `cobl-002-primary-asha1` (us-east-1)
-- **Secondary Bucket:** `cobl-002-secondary-asha1` (us-west-2)
-- **IAM Role:** `cobl-002-s3-replication-role` for cross-region replication
-- **Cross-Region Replication (CRR):** Configured from primary → secondary
+## ⚙️ Prerequisites
 
-## Testing Steps
+Ensure the following are available before implementation:
 
-1. Uploaded `testfile_10rows.csv` to the primary bucket.
-2. Verified replication in the secondary bucket.
-3. Checked metadata and version IDs to ensure consistency.
-4. Versioning enabled on both buckets.
+- AWS Account with CloudOps permissions
+- Two AWS Regions selected (e.g., `us-east-1` as primary, `us-west-2` as secondary)
+- AWS CLI installed and configured
+- Terraform installed
+- GitHub Repository
+- S3 Buckets in both regions for replication
+- IAM User with required permissions to create roles, policies, and CRR
 
-## How to Deploy
+---
 
-1. Navigate to the `terraform` folder:
+## 🔐 Required GitHub Secrets
 
-   ```powershell
-   cd terraform
-2. Initialize Terraform:
+Create an IAM user in AWS and generate access keys.  
+Add the following secrets to your GitHub repository:
 
-  ```powershell
-  terraform init
-3. Plan the deployment:
+**Path:**  
+`GitHub → Repository Settings → Secrets & Variables → Actions → New Repository Secret`
 
-```powershell
-terraform plan
+| Secret Name             | Description                              |
+|-------------------------|------------------------------------------|
+| `AWS_ACCESS_KEY_ID`     | IAM user access key                       |
+| `AWS_SECRET_ACCESS_KEY` | IAM user secret key                       |
 
+---
 
-4. Apply the deployment:
-  ```powershell
-  terraform apply
+## 📁 Project Structure
 
+```text
+cobl-002-multi-region-support/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
+├── terraform/
+│   ├── backend.tf
+│   ├── main.tf
+│   ├── variables.tf
+│   └── outputs.tf
+├── scripts/
+│   └── replication-validation.py
+└── README.md
 
-Type yes when prompted.
+Implementation of COBL-002 Multi-Region Support: Primary & Secondary Region S3 Setup, Cross-Region Replication, Monitoring, Governance, and DR readiness.
 
-## How to Test
-
-Upload a CSV or test file to the primary bucket:
-
-aws s3 cp "C:\path\to\file.csv" s3://cobl-002-primary-asha1/
-
-
-Check replication in the secondary bucket:
-
-aws s3 ls s3://cobl-002-secondary-asha1/
-
-
-Confirm versioning and metadata:
-
-aws s3api list-object-versions --bucket cobl-002-primary-asha1 --prefix file.csv
-aws s3api list-object-versions --bucket cobl-002-secondary-asha1 --prefix file.csv
-
-Notes
-
-Terraform versioning argument is deprecated, but works.
-
-Ensure AWS credentials are configured before running Terraform.
