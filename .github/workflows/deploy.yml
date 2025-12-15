@@ -34,7 +34,7 @@ jobs:
         working-directory: ./terraform
 
       - name: Upload CSV to Primary Bucket
-        run: aws s3 cp ./testfile_10rows.csv s3://cobl-002-primary-asha1/
+        run: aws s3 cp ./terraform/testfile_10rows.csv s3://cobl-002-primary-asha1/
 
       - name: Verify Replication to Secondary Bucket
         run: |
